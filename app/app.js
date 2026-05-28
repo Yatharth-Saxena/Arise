@@ -31,9 +31,10 @@ const state = {
         DIS: 40
     },
     tasks: [
-        { id: 1, title: "MANDATORY CODING", meta: "DSA / LEETCODE", stat: "INT", completed: false },
-        { id: 2, title: "100 PUSH-UPS", meta: "TIER 2 - ADAPTIVE", stat: "STR", completed: false },
-        { id: 3, title: "10 MIN STRETCHING", meta: "RECOVERY", stat: "AGI", completed: false }
+        { id: 1, title: "Push-ups", progress: "[100/100]", stat: "STR", completed: true },
+        { id: 2, title: "Sit-ups", progress: "[100/100]", stat: "STR", completed: true },
+        { id: 3, title: "Squats", progress: "[100/100]", stat: "STR", completed: true },
+        { id: 4, title: "Running", progress: "[10/10km]", stat: "STR", completed: true }
     ],
     penaltyActive: false
 };
@@ -288,15 +289,15 @@ function renderTasks() {
     taskListEl.innerHTML = '';
     state.tasks.forEach((task, index) => {
         const taskEl = document.createElement('div');
-        taskEl.className = `task-item ${task.completed ? 'completed' : ''}`;
+        taskEl.className = `task-item-new`;
         taskEl.innerHTML = `
-            <div class="task-checkbox"></div>
-            <div class="task-details">
-                <div class="task-title">${task.title}</div>
-                <div class="task-meta">
-                    <span class="task-stat-tag">+1 ${task.stat}</span>
-                    <span>${task.meta}</span>
-                </div>
+            <div class="task-title-new">${task.title}</div>
+            <div class="task-progress-box">
+                <span class="task-progress-text">${task.progress}</span>
+                <svg class="task-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <path d="M9 12l2 2 4-4"/>
+                </svg>
             </div>
         `;
         
@@ -327,6 +328,7 @@ const countdownEl = document.getElementById('countdown-timer');
 let debugMode = true; // Set false to use actual midnight
 
 function updateTimer() {
+    if (!countdownEl) return;
     const now = new Date();
     
     // Target is midnight today
@@ -349,9 +351,11 @@ setInterval(updateTimer, 1000);
 updateTimer();
 
 // Debug: Click the timer to force a penalty
-countdownEl.addEventListener('click', () => {
-    triggerPenalty();
-});
+if (countdownEl) {
+    countdownEl.addEventListener('click', () => {
+        triggerPenalty();
+    });
+}
 
 
 // 6. PENALTY SYSTEM
