@@ -3,11 +3,17 @@
 // --- TAB NAVIGATION LOGIC ---
 const navBtns = document.querySelectorAll('.nav-btn');
 const tabContents = document.querySelectorAll('.tab-content');
+const tabSound = new Audio('tab-sound.mp3');
+tabSound.volume = 0.5; // Optional: Adjust if it's too loud
 
 navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         const targetId = btn.getAttribute('data-tab');
         if (!targetId) return;
+
+        // Play sound effect
+        tabSound.currentTime = 0;
+        tabSound.play().catch(err => console.log('Audio playback blocked/failed:', err));
 
         // Remove active class from all tabs and buttons
         navBtns.forEach(b => b.classList.remove('active'));
@@ -33,8 +39,8 @@ const state = {
     tasks: [
         { id: 1, title: "Push-ups", progress: "[100/100]", stat: "STR", completed: true },
         { id: 2, title: "Sit-ups", progress: "[100/100]", stat: "STR", completed: true },
-        { id: 3, title: "Squats", progress: "[100/100]", stat: "STR", completed: true },
-        { id: 4, title: "Running", progress: "[10/10km]", stat: "STR", completed: true }
+        { id: 3, title: "Squats", progress: "[0/100]", stat: "STR", completed: false },
+        { id: 4, title: "Running", progress: "[0/10km]", stat: "STR", completed: false }
     ],
     penaltyActive: false
 };
@@ -290,14 +296,27 @@ function renderTasks() {
     state.tasks.forEach((task, index) => {
         const taskEl = document.createElement('div');
         taskEl.className = `task-item-new`;
+        let iconSvg = '';
+        if (task.completed) {
+            iconSvg = `
+                <svg class="task-check-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path class="task-check-box completed" d="M14 5 H7 a2 2 0 0 0 -2 2 v10 a2 2 0 0 0 2 2 h10 a2 2 0 0 0 2 -2 v-5" stroke="#10b981" />
+                    <path class="task-check-mark" d="M8 12 l3 3 l9 -9" stroke="#10b981" />
+                </svg>
+            `;
+        } else {
+            iconSvg = `
+                <svg class="task-check-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect class="task-check-box pending" x="5" y="5" width="14" height="14" rx="2" stroke="#fff" />
+                </svg>
+            `;
+        }
+
         taskEl.innerHTML = `
             <div class="task-title-new">${task.title}</div>
             <div class="task-progress-box">
                 <span class="task-progress-text">${task.progress}</span>
-                <svg class="task-check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <path d="M9 12l2 2 4-4"/>
-                </svg>
+                ${iconSvg}
             </div>
         `;
         
